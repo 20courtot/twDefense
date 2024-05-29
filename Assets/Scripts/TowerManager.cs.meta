@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: d5da56290574f4bd9a40ffe3a9101722
+timeCreated: 1477865183
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - archerTowerPrefab: {fileID: 1000011985422376, guid: e2e799edecc61422987d5745624c3e71,
+      type: 2}
+  - castleTowerPrefab: {fileID: 1000010352174850, guid: 7e0a7b676a76148bda3ea878dd2859f1,
+      type: 2}
+  - knightTowerPrefab: {fileID: 1000010585862202, guid: 52b7acc1ecf8147e1b1ca00977d63830,
+      type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
