@@ -2,8 +2,8 @@
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
 
-public class TowerManager : Singleton<TowerManager> {
-
+public class TowerManager : Singleton<TowerManager>
+{
     public TowerButton towerBtnPressed { get; set; }
     public List<GameObject> TowerList = new List<GameObject>();
     public List<Collider2D> BuildList = new List<Collider2D>();
@@ -17,14 +17,10 @@ public class TowerManager : Singleton<TowerManager> {
     }
 
     void Update() {
-        // If the left mouse button is clicked.
         if (Input.GetMouseButtonDown(0)) {
-            // Get the mouse position on the screen and send a raycast into the game world from that position.
             Vector2 worldPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             RaycastHit2D hit = Physics2D.Raycast(worldPoint, Vector2.zero);
-            // If something was hit, the RaycastHit2D.collider will not be null.
-            if (hit.collider.tag == "BuildSite") {
-                // hit.collider.tag = "BuildSiteFull";
+            if (hit.collider != null && hit.collider.tag == "BuildSite") {
                 buildTile = hit.collider;
                 buildTile.tag = "BuildSiteFull";
                 RegisterBuildSite(buildTile);
@@ -37,7 +33,6 @@ public class TowerManager : Singleton<TowerManager> {
     }
 
     public void RegisterBuildSite(Collider2D buildTag) {
-        // site.collider.tag = "BuildSiteFull";
         BuildList.Add(buildTag);
     }
 
@@ -61,11 +56,14 @@ public class TowerManager : Singleton<TowerManager> {
 
     public void placeTower(RaycastHit2D hit) {
         if (!EventSystem.current.IsPointerOverGameObject() && towerBtnPressed != null) {
-            GameObject newTower = Instantiate(towerBtnPressed.TowerObject);
-            newTower.transform.position = hit.transform.position;
-            RegisterTower(newTower);
-            buyTower(towerBtnPressed.TowerPrice);
-            disableDragSprite();
+            ITower newTower = TowerFactory.CreateTower(towerBtnPressed.TowerObject);
+            if (newTower != null) {
+                GameObject newTowerObject = (newTower as MonoBehaviour).gameObject;
+                newTowerObject.transform.position = hit.transform.position;
+                RegisterTower(newTowerObject);
+                buyTower(towerBtnPressed.TowerPrice);
+                disableDragSprite();
+            }
         }
     }
 
@@ -77,7 +75,7 @@ public class TowerManager : Singleton<TowerManager> {
     }
 
     public void buyTower(int price) {
-        GameManager.Instance.subtractMoney(price);  // Correction ici
+        GameManager.Instance.subtractMoney(price);
         GameManager.Instance.AudioSource.PlayOneShot(SoundManager.Instance.BuildTower);
     }
 
@@ -96,3 +94,4 @@ public class TowerManager : Singleton<TowerManager> {
         towerBtnPressed = null;
     }
 }
+

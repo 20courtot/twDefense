@@ -335,9 +335,11 @@
 "Assets/Scripts/GameManager.cs"
 "Assets/Scripts/Singleton.cs"
 "Assets/Scripts/SoundManager.cs"
+"Assets/Scripts/Tower/ITower.cs"
 "Assets/Scripts/Tower/Projectile.cs"
 "Assets/Scripts/Tower/Tower.cs"
 "Assets/Scripts/Tower/TowerButton.cs"
+"Assets/Scripts/Tower/TowerFactory.cs"
 "Assets/Scripts/TowerManager.cs"
 -langversion:9.0
 /deterministic

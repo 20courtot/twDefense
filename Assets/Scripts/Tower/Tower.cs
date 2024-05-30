@@ -2,22 +2,42 @@
 using System.Collections.Generic;
 using System.Collections;
 
-public class Tower : MonoBehaviour {
+public class Tower : MonoBehaviour, ITower
+{
+    [SerializeField]
+    private float timeBetweenAttacks;
+    [SerializeField]
+    private float attackRadius;
+    [SerializeField]
+    private Projectile projectile;
+    private bool isAttack = false;
+    private Enemy targetEnemy = null;
+    private float attackCounter;
+    private AudioSource audioSource;
 
-	[SerializeField]
-	private float timeBetweenAttacks;
-	[SerializeField]
-	private float attackRadius;
-	[SerializeField]
-	private Projectile projectile;
-	private bool isAttack = false; 
-	private Enemy targetEnemy = null;
-	private float attackCounter;
-	private AudioSource audioSource;
+    void Start() {
+        audioSource = GetComponent<AudioSource>();
+    }
 
-	void Start() {
-		audioSource = GetComponent<AudioSource>();
-	}
+    public float AttackRadius => attackRadius;
+    public float TimeBetweenAttacks => timeBetweenAttacks;
+
+    public void Attack() {
+        isAttack = false;
+        if (targetEnemy == null) {
+            return;
+        }
+        Projectile newProjectile = Instantiate(projectile) as Projectile;
+        newProjectile.transform.localPosition = transform.localPosition;
+        if (newProjectile.ProjectileType == proType.arrow) {
+            audioSource.PlayOneShot(SoundManager.Instance.Arrow);
+        } else if (newProjectile.ProjectileType == proType.fireball) {
+            audioSource.PlayOneShot(SoundManager.Instance.Fireball);
+        } else if (newProjectile.ProjectileType == proType.rock) {
+            audioSource.PlayOneShot(SoundManager.Instance.Rock);
+        }
+        StartCoroutine(MoveProjectile(newProjectile));
+    }
 
 	public virtual void Update() {
     attackCounter -= Time.deltaTime;
@@ -41,23 +61,6 @@ public class Tower : MonoBehaviour {
 		if (isAttack) {
 			Attack();
 		}
-	}
-	
-	public void Attack() {
-		isAttack = false;
-		if (targetEnemy == null) {
-			return;
-		}
-		Projectile newProjectile = Instantiate(projectile) as Projectile;
-		newProjectile.transform.localPosition = transform.localPosition;
-		if (newProjectile.ProjectileType == proType.arrow) {
-			audioSource.PlayOneShot(SoundManager.Instance.Arrow);
-		} else if (newProjectile.ProjectileType == proType.fireball) {
-			audioSource.PlayOneShot(SoundManager.Instance.Fireball);
-		} else if (newProjectile.ProjectileType == proType.rock) {
-			audioSource.PlayOneShot(SoundManager.Instance.Rock);
-		}
-		StartCoroutine(MoveProjectile(newProjectile));
 	}
 
 	IEnumerator MoveProjectile(Projectile projectile) {
