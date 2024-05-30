@@ -11,53 +11,68 @@ public class TowerManager : Singleton<TowerManager>
     private SpriteRenderer spriteRenderer;
     private Collider2D buildTile;
 
-    void Start() {
+    void Start()
+    {
         spriteRenderer = GetComponent<SpriteRenderer>();
         buildTile = GetComponent<Collider2D>();
     }
 
-    void Update() {
-        if (Input.GetMouseButtonDown(0)) {
+    void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
             Vector2 worldPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             RaycastHit2D hit = Physics2D.Raycast(worldPoint, Vector2.zero);
-            if (hit.collider != null && hit.collider.tag == "BuildSite") {
+            if (hit.collider != null && hit.collider.tag == "BuildSite")
+            {
                 buildTile = hit.collider;
                 buildTile.tag = "BuildSiteFull";
                 RegisterBuildSite(buildTile);
                 placeTower(hit);
             }
         }
-        if (spriteRenderer.enabled) {
+        if (spriteRenderer.enabled)
+        {
             followMouse();
         }
     }
 
-    public void RegisterBuildSite(Collider2D buildTag) {
+    public void RegisterBuildSite(Collider2D buildTag)
+    {
         BuildList.Add(buildTag);
     }
 
-    public void RenameTagsBuildSites() {
-        foreach (Collider2D buildTag in BuildList) {
+    public void RenameTagsBuildSites()
+    {
+        foreach (Collider2D buildTag in BuildList)
+        {
             buildTag.tag = "BuildSite";
         }
         BuildList.Clear();
     }
 
-    public void RegisterTower(GameObject tower) {
+    public void RegisterTower(GameObject tower)
+    {
         TowerList.Add(tower);
     }
 
-    public void DestroyAllTowers() {
-        foreach (GameObject tower in TowerList) {
+    public void DestroyAllTowers()
+    {
+        foreach (GameObject tower in TowerList)
+        {
             Destroy(tower.gameObject);
         }
         TowerList.Clear();
     }
 
-    public void placeTower(RaycastHit2D hit) {
-        if (!EventSystem.current.IsPointerOverGameObject() && towerBtnPressed != null) {
-            ITower newTower = TowerFactory.CreateTower(towerBtnPressed.TowerObject);
-            if (newTower != null) {
+    public void placeTower(RaycastHit2D hit)
+    {
+        if (!EventSystem.current.IsPointerOverGameObject() && towerBtnPressed != null)
+        {
+            IAttackStrategy attackStrategy = new BasicAttackStrategy(); // Ou utilisez d'autres stratégies en fonction du type de tour
+            ITower newTower = TowerFactory.CreateTower(towerBtnPressed.TowerObject, attackStrategy);
+            if (newTower != null)
+            {
                 GameObject newTowerObject = (newTower as MonoBehaviour).gameObject;
                 newTowerObject.transform.position = hit.transform.position;
                 RegisterTower(newTowerObject);
@@ -67,31 +82,36 @@ public class TowerManager : Singleton<TowerManager>
         }
     }
 
-    public void selectedTower(TowerButton towerBtn) {
-        if (towerBtn.TowerPrice <= GameManager.Instance.TotalMoney) {
+    public void selectedTower(TowerButton towerBtn)
+    {
+        if (towerBtn.TowerPrice <= GameManager.Instance.TotalMoney)
+        {
             towerBtnPressed = towerBtn;
             enableDragSprite(towerBtn.DragSprite);
         }
     }
 
-    public void buyTower(int price) {
+    public void buyTower(int price)
+    {
         GameManager.Instance.subtractMoney(price);
         GameManager.Instance.AudioSource.PlayOneShot(SoundManager.Instance.BuildTower);
     }
 
-    private void followMouse() {
+    private void followMouse()
+    {
         transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         transform.position = new Vector2(transform.position.x, transform.position.y);
     }
 
-    public void enableDragSprite(Sprite sprite) {
+    public void enableDragSprite(Sprite sprite)
+    {
         spriteRenderer.enabled = true;
         spriteRenderer.sprite = sprite;
     }
 
-    public void disableDragSprite() {
+    public void disableDragSprite()
+    {
         spriteRenderer.enabled = false;
         towerBtnPressed = null;
     }
 }
-
