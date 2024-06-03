@@ -7,7 +7,7 @@ public class FireballAttackStrategy : IAttackStrategy
     {
         if (tower.TargetEnemy != null)
         {
-            Projectile newProjectile = Object.Instantiate(tower.Projectile) as Projectile;
+            Projectile newProjectile = tower.Projectile.Clone();
             newProjectile.transform.localPosition = tower.transform.localPosition;
 
             switch (newProjectile.ProjectileType)

@@ -4,16 +4,27 @@ public static class TowerFactory
 {
     public static ITower CreateTower(GameObject towerPrefab, IAttackStrategy attackStrategy)
     {
-        GameObject newTowerObject = Object.Instantiate(towerPrefab);
-        Tower newTower = newTowerObject.GetComponent<Tower>();
-        if (newTower == null)
+        GameObject towerObject = Object.Instantiate(towerPrefab);
+        ITower tower = towerObject.GetComponent<ITower>();
+        if (tower != null)
         {
-            Debug.LogError("The tower prefab does not contain a component that implements ITower.");
+            tower.SetAttackStrategy(attackStrategy);
         }
-        else
+        return tower;
+    }
+
+    public static IAttackStrategy GetAttackStrategy(proType projectileType)
+    {
+        switch (projectileType)
         {
-            newTower.SetAttackStrategy(attackStrategy);
+            case proType.arrow:
+                return new BasicAttackStrategy();
+            case proType.fireball:
+                return new FireballAttackStrategy();
+            case proType.rock:
+                return new RockAttackStrategy();
+            default:
+                return new BasicAttackStrategy();
         }
-        return newTower;
     }
 }

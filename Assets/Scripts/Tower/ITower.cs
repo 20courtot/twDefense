@@ -1,5 +1,6 @@
 public interface ITower
 {
-    void Attack();
     void SetAttackStrategy(IAttackStrategy strategy);
+    Enemy TargetEnemy { get; }
+    Projectile Projectile { get; }
 }

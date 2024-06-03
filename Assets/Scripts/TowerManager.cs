@@ -65,17 +65,21 @@ public class TowerManager : Singleton<TowerManager>
         TowerList.Clear();
     }
 
-    public void placeTower(RaycastHit2D hit)
-    {
+    public void placeTower(RaycastHit2D hit){
         if (!EventSystem.current.IsPointerOverGameObject() && towerBtnPressed != null)
         {
-            IAttackStrategy attackStrategy = new BasicAttackStrategy(); // Ou utilisez d'autres stratégies en fonction du type de tour
-            ITower newTower = TowerFactory.CreateTower(towerBtnPressed.TowerObject, attackStrategy);
+            GameObject towerPrefab = towerBtnPressed.TowerObject;
+            ITower newTower = TowerFactory.CreateTower(towerPrefab, null); // Instancie la tour sans stratégie pour le moment
             if (newTower != null)
             {
                 GameObject newTowerObject = (newTower as MonoBehaviour).gameObject;
                 newTowerObject.transform.position = hit.transform.position;
                 RegisterTower(newTowerObject);
+
+                // Définir la stratégie d'attaque après l'instanciation
+                IAttackStrategy attackStrategy = TowerFactory.GetAttackStrategy(newTower.Projectile.ProjectileType);
+                newTower.SetAttackStrategy(attackStrategy);
+
                 buyTower(towerBtnPressed.TowerPrice);
                 disableDragSprite();
             }
